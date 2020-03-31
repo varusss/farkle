@@ -3,13 +3,15 @@
 #include <cassert>
 #include <cstdlib>
 using std::vector;
-using std::cout;
-using std::endl;
+//using std::cout;
+//using std::endl;
 
 class Die {
 	const unsigned int SIDES;
 	vector<double> weight;
+	vector<int> vec;
 	unsigned int last_roll;
+	bool cheat = false;
 	public:
 	Die(); //Create a fair die
 	Die(vector<double> new_weights, int new_sides); //Create a cheater die
