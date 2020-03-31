@@ -3,6 +3,7 @@
 #include <vector>
 #include <cassert>
 #include <cstdlib>
+using std::string;
 using std::vector;
 using std::cout;
 using std::endl;
@@ -15,7 +16,7 @@ class Player {
         unsigned int bet;
         
     public:
-        Player(string new_name, unsigned int new_score, unsinged int new_money, unsigned int new_bet);
+        Player(string new_name, unsigned int new_score, unsigned int new_money, unsigned int new_bet);
         void setScore(int added_value);
         void setName(string s);
         void setPlayerMoney(int new_money);
