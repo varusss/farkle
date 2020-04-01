@@ -1,5 +1,5 @@
 a.out: main.o die.o player.o
-	g++ main.o die.o player.o
+	g++ -std=c++11 -Wall -Wextra -fsanitize=address main.o die.o player.o
 
 main.o: main.cc die.h player.h
 	g++ -c main.cc
