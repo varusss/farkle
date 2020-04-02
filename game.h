@@ -19,5 +19,10 @@ class Game {
 
     public:
         Game();
-        void printScoreboard(players);
-}
+        void printScoreboard(vector<Player> players);
+        int prompt(const int flag);
+        void startGame();
+        unsigned int retrieveBet();
+        void takeBets(int bet);
+        void gameOver();
+};

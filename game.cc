@@ -3,62 +3,83 @@
 
 using namespace std;
 
-enum GameFlags {StartOfGame, };
+enum GameFlags {InitiateGame, KeepPlaying};
 
-Game::Game() {};
-void Game::printScoreboard(const vector<Player> &players) {
+Game::Game() {
+    Game::startGame();
+}
+
+unsigned int Game::retrieveBet() {
+    system("clear");
+    unsigned int retval;
+    while (true) {
+        retval = 0;
+        cout << "How much money do you want to wager? \n\t> "; //TODO: impliment the actual gambling
+        cin >> retval; if (!cin or retval < 1) {cout << "Invalid input! Try again.\n"; cin.clear();}
+        break;
+    }
+    return retval;
+}
+
+void Game::printScoreboard(vector<Player> players) {
     scoreboard.print(players);
 }
-void Game::prompt(const int flag) {
-    if (flag == StartOfGame) {
+int Game::prompt(const int flag) {
+    if (flag == InitiateGame) {
         system("clear");
 	    srand(time(0));
 
-        cout << "===================="
-             << "=      FARKLE      ="
-             << "====================" << endl << endl;
+        cout << "================================" << endl
+             << "=            FARKLE            =" << endl
+             << "================================" << endl << endl;
 
         int playerNum = 0;
         while (players.size() != 2) {
             string name;
-            int money;
-            cout << "Please enter a name for player " << playerNum + 1 << ": (q to quit)" << endl << "\t>";
+            unsigned int money;
+            cout << "Please enter a name for player " << playerNum + 1 << ": (q to quit)" << endl << "\t> ";
             cin >> name; if (name == "q" or name == "quit") break;
             if (!isalpha(name[0])) {cout << "Invalid name!\n"; continue;}
             while (1) {
                 money = 0; 
-                cout << "Please enter an amount of money you want to start out with (must be between 5 and 5000)" << endl << "\t>";
+                cout << "Please enter an amount of money you want to start out with (must be between 5 and 5000)" << endl << "\t> ";
                 cin >> money; if (!cin or money < 5 or money > 5000) {cout << "Invalid input! Try again.\n"; cin.clear(); continue;}
+                break;
             }
 
             vector<Die> selected_dice;
-            cout << "Choose 6 Dice\n";
-            cout << "1.Normal Die\n";
-            cout << "2.Biased die\n";
-            cout << "3.Ci Die\n";
-            cout << "4.Die of Misfortune\n";
-            cout << "5.Even Number Die\n";
-            cout << "6.Fer Die\n";
-            cout << "7.Heavenly Kingdom Die\n";
-            cout << "8.Holy Trinity Die\n";
-            cout << "9.Lu Die\n";
-            cout << "10.Lucky Die\n";
-            cout << "11.Lucky playing Die\n";
-            cout << "12.Odd die\n";
-            cout << "13.Shrinking Playing Die\n";
-            cout << "14.Strip Die\n";
-            cout << "15.Unpopular Die\n";
+            cout << "Choose 6 Dice\n\t";
+            cout << "1.Normal Die\n\t";
+            cout << "2.Biased die\n\t";
+            cout << "3.Ci Die\n\t";
+            cout << "4.Die of Misfortune\n\t";
+            cout << "5.Even Number Die\n\t";
+            cout << "6.Fer Die\n\t";
+            cout << "7.Heavenly Kingdom Die\n\t";
+            cout << "8.Holy Trinity Die\n\t";
+            cout << "9.Lu Die\n\t";
+            cout << "10.Lucky Die\n\t";
+            cout << "11.Lucky playing Die\n\t";
+            cout << "12.Odd die\n\t";
+            cout << "13.Shrinking Playing Die\n\t";
+            cout << "14.Strip Die\n\t";
+            cout << "15.Unpopular Die" << endl;
             int dice =0;
-            while (true){
+            while (selected_dice.size() != 6){
                 cin.clear();
                 cin >> dice;
                 if (!cin or dice < 1 or dice >15) {
                     cout << "Invalid choice\n";
                     continue;
                 }
+                cout << "You chose: " << table.getDie()
+                selected_dice.push_back(table.getDie(dice));
+            }
+                /*
                 if (dice == 1){ //normal die
-                    Die temp;
-                    selected_dice.push_back(temp);
+                    //Die temp;
+                    //selected_dice.push_back(temp);
+                    selected_dice.push_back(table.getDie(dice));
                 }
                 else if (dice == 2) { //biased die
                     Die temp({.20,.30,.10,.10,.10,.20},6, "Biased Die");
@@ -111,33 +132,62 @@ void Game::prompt(const int flag) {
                 else if (dice == 15){ //unpopular die 
                     Die temp({.20,.20,.30,.10,.10,.10},6, "Unpopular Die");
                     selected_dice.push_back(temp);
-                }	
-                if (selected_dice.size() == 6) {
-                    playerTemp.setDice(selected_dice);
-                    break;
                 }
-            }
+                */
+             
             
-            int wager;
+            unsigned int wager = 0;
+            unsigned int score = 0;
+            players.push_back(Player{name,score,money,wager,selected_dice});
+            playerNum++;
             system("clear");
-            while (true) {
-                wager = 0;
-                cout << "How much money do you want to wager? You have " << money << " dollars to wager.\n"; //TODO: impliment the actual gambling
-                cin >> wager; if (!cin or wager > money or wager < 1) {cout << "Invalid input! Try again.\n"; cin.clear();}
-                }
-            players.push_back(Player{name,0,money,wager});
         }
     }
 
-    /*
-    if (flag == ) {
-
+    if (flag == KeepPlaying) {
+        cout << "Would you like to play again? (Y) or (N) \n\t> ";
+        string s;
+        cin >> s;
+        if (s.size() && toupper(s.at(0)) == 'Y') return 1;
+        else
+            return 0;
     }
-    if (flag == )
-    */
+    return 1;
 }
+
+void Game::takeBets(int bet) {
+    for (auto p : players) {
+        table.setWager(bet); //update wager on table 
+        p.setMoney(bet*-1); // take money from them and place on table.
+        //cout << p.getBet() << endl;
+    }
+}
+
 void Game::startGame() {
-    prompt(StartOfGame);
+    // Get players name, desired starting money, initial bet, and desired dice
+    prompt(InitiateGame);
+    while (1){
+        // Start repetitive flow 
+        unsigned int wager = Game::retrieveBet();
+        Game::takeBets(wager);
 
 
+        //Game::startRolling() //TODO
+        for (Player p : players) {
+            if (p.getMoney() <= 0) {
+                cout << "Player " << p.getName() << " ran out of money! GAME OVER!\n";
+                Game::gameOver();
+            }
+        }
+        if (prompt(KeepPlaying)) continue;
+        else
+            Game::gameOver();
+    }
+    
+
+}
+
+void Game::gameOver() {
+    cout << "Thanks for playing!\n";
+    exit(0);
 }

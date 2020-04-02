@@ -20,7 +20,7 @@ class Player {
         Player(string new_name, unsigned int new_score, unsigned int new_money, unsigned int new_bet, vector<Die> new_dice);
         void setScore(int added_value);
         void setName(string s);
-        void setPlayerMoney(int new_money);
+        void setMoney(int new_money);
         void setBet(int new_bet);
        	void setDice(vector<Die> new_dice);
 		unsigned int getScore();

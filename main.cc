@@ -2,14 +2,17 @@
 #include <iostream>
 #include "die.h"
 #include "player.h"
-#include <unistd.h>
+#include "game.h"
+//#include <unistd.h>
 #include <stdio.h>
 #include <algorithm>
 using namespace std;
 
-int cal_score(vector<int> rolls);
+//int cal_score(vector<int> rolls);
 
 int main() {
+	Game runGame;
+	/*
 	system("clear");
 	srand(time(0));
 
@@ -318,5 +321,6 @@ int cal_score(vector<int> rolls){
 	if (count[0] >= 1 and count[0] < 3) score += 100 * count[0];
 	if (count[4] >= 1 and count[4] < 3) score += 50 * count[4];
 	return score;
+	*/
 }
 

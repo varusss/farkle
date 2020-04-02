@@ -1,5 +1,5 @@
-a.out: main.o die.o player.o scoreboard.o table.o
-	g++ -std=c++11 -Wall -Wextra -fsanitize=address main.o die.o player.o scoreboard.o table.o
+a.out: main.o die.o player.o scoreboard.o table.o game.o
+	g++ -std=c++11 -Wall -Wextra -fsanitize=address main.o die.o game.o player.o scoreboard.o table.o
 
 main.o: main.cc die.h player.h
 	g++ -c main.cc
@@ -15,6 +15,9 @@ scoreboard.o : scoreboard.cc scoreboard.h
 
 table.o : table.cc table.h
 	g++ -c table.cc
+
+game.o : game.cc game.h
+	g++ -c game.cc
 
 clean:
 	rm -f *.o a.out core

@@ -16,7 +16,7 @@ Die::Die(vector<double> new_weights, const int new_sides, string new_name) : SID
 	for (unsigned int i = 0; i < SIDES; i++) {
 		assert(new_weights[i] >= 0 && new_weights[i] <= 1);
 		sum += new_weights[i];
-		vec.push_back(new_weights[i] *100);
+		vec.push_back(new_weights[i] * 100);
 		weight.push_back(new_weights[i]);
 		cheat = true;
 	}

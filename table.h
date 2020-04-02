@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <cstdlib>
+#include "die.h"
 using std::vector;
 using std::cout;
 using std::endl;
@@ -13,14 +14,12 @@ class Table {
          unsigned int current_score_of_turn;
     public:
     Table();
-    Table(vector<unsigned int> table_dice, unsigned int new_wager, unsigned int new_current_score);
-    void setWager(unsigned int new_wager) {wager = new_wager;}
-    void setCurrentScore(unsigned int new_score) {current_score_of_turn = new_score;}
-    void setVecOfDice(vector<unsigned int> new_dice) {table_die_vec = new_dice;}
-    unsigned int getWager() {return wager;}
-    unsigned int getScore() {return current_score_of_turn;}
-    unsigned int getDiceVec() {return table_die_vec;}
-
-
-
+    //Table(vector<unsigned int> table_dice, unsigned int new_wager, unsigned int new_current_score);
+    Die getDie(int dieIndex);
+    void setWager(unsigned int new_wager);
+    void setCurrentScore(unsigned int new_score);
+    void setVecOfDice(vector<Die> new_dice);
+    unsigned int getWager();
+    unsigned int getScore();
+    vector<Die> getDiceVec();
 }; 

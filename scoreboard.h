@@ -5,7 +5,7 @@ using std::vector;
 
 class Scoreboard {
     private: 
-        vector<unsigned int> player_scoreboard; 
+        vector<unsigned int> player_scoreboard;
     public:
         Scoreboard();
         Scoreboard(int num_of_players);
