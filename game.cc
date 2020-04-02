@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "game.h"
 
 using namespace std;
@@ -6,6 +7,7 @@ using namespace std;
 enum GameFlags {InitiateGame, KeepPlaying};
 
 Game::Game() {
+    scoreboard = Scoreboard(2);
     Game::startGame();
 }
 
@@ -35,11 +37,15 @@ int Game::prompt(const int flag) {
              << "================================" << endl << endl;
 
         int playerNum = 0;
-        while (1) {
-            cin.clear();
-            int temp = 0;
-            cout << "Please enter how many points you want to play to (suggested: any number between 1000-5000)\n\t> ";
-            cin >> temp; if (!cin or temp < 1000 or temp > 5000) {cout << "Invalid input! (Enter a number between 1000-5000\n"; continue;} 
+        while (1) {            
+            unsigned int temp = 0;
+            cout << "Please enter how many points you want to play to (suggested: any number between 1000-5000)\n\t> " << flush;
+            cin >> temp; if (!cin or temp < 1000 or temp > 5000) {
+                cout << "Invalid input! (Enter a number between 1000-5000\n";
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                continue;
+                } 
             table.setMaxScore(temp);
             break;
         }
@@ -53,7 +59,11 @@ int Game::prompt(const int flag) {
             while (1) {
                 money = 0; 
                 cout << "Please enter an amount of money you want to start out with (must be between 5 and 5000)" << endl << "\t> ";
-                cin >> money; if (!cin or money < 5 or money > 5000) {cout << "Invalid input! Try again.\n"; cin.clear(); continue;}
+                cin >> money; if (!cin or money < 5 or money > 5000) {
+                    cout << "Invalid input! Try again.\n"; 
+                    cin.clear(); 
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    continue;}
                 break;
             }
 
@@ -76,10 +86,11 @@ int Game::prompt(const int flag) {
             cout << "15.Unpopular Die" << endl;
             int dice =0;
             while (selected_dice.size() != 6){
-                cin.clear();
                 cin >> dice;
                 if (!cin or dice < 1 or dice >15) {
                     cout << "Invalid choice\n";
+                    cin.clear();
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     continue;
                 }
                 cout << "You chose: " << table.getDie(dice).getName() << endl;  
@@ -180,7 +191,7 @@ void Game::startGame() {
         // Start repetitive flow 
         unsigned int wager = Game::retrieveBet();
         Game::takeBets(wager);
-
+        Game::startRolling();
 
         //Game::startRolling() //TODO
         for (Player p : players) {
@@ -199,7 +210,161 @@ void Game::startRolling() {
     // TODO
     // Need:
     // Roll, scoreboard implementation, score calculation, 
+
+    int turn = 0;
+	while (true) {
+		system("clear");
+        scoreboard.print(players);
+		/*cout <<"+++++++++++++++++++++++\n";
+		for (Player &p :players) {
+			cout << "Player: " << p.getName() << "\tScore: "<< p.getScore() << "\tMoney: " << p.getMoney() <<endl;// TODO: display score from table
+		}
+		cout <<"+++++++++++++++++++++++\n";
+        */
+		for (Player &p :players){
+			vector<int> rolls;
+			unsigned int score =0;
+			cout << "=====================\n";
+			cout << p.getName() << "'s turn:" << endl;
+			
+			for (int i =0; i < 6; i++){
+				Die temp = p.getDie(i);
+				temp.roll();
+				cout << i + 1<< ".Rolled: " << temp.get_roll() << endl;
+				rolls.push_back(temp.get_roll());
+			}
+			score = Game::cal_score(rolls);
+			cout << "Score: " << score << endl;
+			if (!score and turn > 1) {
+				cout << "Farkled!\n";
+				cout << "Enter a letter to continue\n";
+				string s;
+				cin >> s;
+				continue;
+			}
+			while (true) {
+				cout << "Do you want to keep the dice(k) or bank the point(b)? \n";
+				cin.clear();
+				char c;
+				cin >> c;
+				if (c == 'k') {
+					cout << "Which dice do you want to keep?(1-6, 0 to roll)\n";	
+					vector<Die> set = p.getDiceSet();
+					vector<int> temp({0,1,2,3,4,5}); 
+					while (true){
+						int i;
+						cin.clear();
+						cin >> i;
+						if (!cin or i <0 or i >6) {
+							cout << "Invalid Choice\n";
+                            cin.clear();
+                            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+							continue;
+						}
+						if (i == 0) {
+							cout << "New Rolls: \n";
+							for (size_t i = 0; i < temp.size(); i++){
+								set[temp[i]].roll();
+								rolls[temp[i]]=set[temp[i]].get_roll();
+							}
+							for (size_t i =0; i <rolls.size(); i++) cout << i+1 << ".Rolled: " << rolls[i] << endl;
+							score = Game::cal_score(rolls);
+							cout << "Score: " << score << endl;
+							break;
+						}
+						remove(temp.begin(), temp.end(), i-1);
+					}
+				}
+				else if (c == 'b') {
+					p.setScore(score);	
+					break;
+				}
+				else {
+					cout << "Invalid Choice\n";
+					continue;
+				}
+			}
+			if (p.getScore() > table.getMaxScore()) {
+				cout << p.getName() <<  " win" << endl; 
+				break;
+			}
+		}
+		system("clear");
+		cout << "---------------------------------\n";
+		string name;
+		for (Player &p: players) {
+			cout << p.getScore() << endl;
+			int max = 0;
+			if (max < p.getScore()) {
+				max = p.getScore();
+				name = p.getName();
+			}
+		}
+		cout << "Turn " << turn << " - " << name << " win!\n"; 
+		cout << "Enter a letter to continue\n";
+		cout << "---------------------------------\n";
+		turn++;
+		string temp;
+		cin >> temp;
+	}
 }
+
+unsigned int Game::cal_score(vector<int> rolls){
+	int score = 0;
+	vector<int> count(6);
+	for (int i : rolls) {
+		if (i == 1) count[0]++;
+		if (i == 2) count[1]++;
+		if (i == 3) count[2]++;
+		if (i == 4) count[3]++;
+		if (i == 5) count[4]++;
+		if (i == 6) count[5]++;
+	}
+	bool triple = false;
+	for (size_t i =0; i<count.size(); i++){
+		if (count[i] == 6){ // 6 of a kinds
+			if (i==0 )score = 1000 *8;
+			else score = (i+1) * 8 * 100;
+			return score;
+		}
+		if (count[i] == 5){ // 5 of a kinds
+			if (i==0) {
+				score = 1000 *4;
+				if (count[4]) score += 50;
+			}
+			else {
+				score = (i+1) * 4 * 100;
+				if (count[0]) score += 100;
+				if (count[4]) score += 50;
+			}
+			return score;
+		}
+		if (count[i] == 4) { // 4 of a kind
+			if (i==0) score = 1000 *2;
+			else {
+				score = (i+1) * 2 * 100;
+				if (count[0]) score += 100;
+				if (count[4]) score += 50;
+			}
+			return score;
+		}
+		if (count[i] == 3) {//3 of a kind
+			if (triple == true) {
+				score = 1200;
+				return score;
+			}
+			else if (i == 0) score += 1000;
+			else {
+				score += (i+1) *100;
+			}
+			triple = true;
+		}
+	}
+	if (count[0] >= 1 and count[0] < 3) score += 100 * count[0];
+	if (count[4] >= 1 and count[4] < 3) score += 50 * count[4];
+	return score;
+}
+
 void Game::gameOver() {
     cout << "Thanks for playing!\n";
     exit(0);

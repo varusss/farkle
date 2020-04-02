@@ -26,4 +26,5 @@ class Game {
         void takeBets(int bet);
         void gameOver();
         void startRolling();
+        unsigned int cal_score(vector<int> rolls);
 };

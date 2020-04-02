@@ -22,10 +22,11 @@ Table::Table() {
 }
 
 Die Table::getDie(int dieIndex) {return table_die_vec[dieIndex-1]; cout << table_die_vec.size() << endl;} // minus 1 because player is choosing 1-15
+vector<Die> Table::getDiceVec() {return table_die_vec;}
 void Table::setWager(unsigned int new_wager) {wager = wager + new_wager;}
 void Table::setCurrentScore(unsigned int new_score) {current_score_of_turn = new_score;}
 void Table::setVecOfDice(vector<Die> new_dice) {table_die_vec = new_dice;}
+void Table::setMaxScore(unsigned int new_max_score) {max_score = new_max_score;}
 unsigned int Table::getWager() {return wager;}
 unsigned int Table::getScore() {return current_score_of_turn;}
-vector<Die> Table::getDiceVec() {return table_die_vec;}
-void Table::setMaxScore(int new_max_score) {max_score = new_max_score;}
+unsigned int Table::getMaxScore() {return max_score;}
