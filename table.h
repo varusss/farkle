@@ -12,6 +12,7 @@ class Table {
         vector<Die> table_die_vec;
          unsigned int wager;
          unsigned int current_score_of_turn;
+         unsigned int max_score;
     public:
     Table();
     //Table(vector<unsigned int> table_dice, unsigned int new_wager, unsigned int new_current_score);
@@ -22,4 +23,5 @@ class Table {
     unsigned int getWager();
     unsigned int getScore();
     vector<Die> getDiceVec();
+    void setMaxScore(int new_max_score);
 }; 

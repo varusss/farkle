@@ -25,4 +25,5 @@ class Game {
         unsigned int retrieveBet();
         void takeBets(int bet);
         void gameOver();
+        void startRolling();
 };

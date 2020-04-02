@@ -28,3 +28,4 @@ void Table::setVecOfDice(vector<Die> new_dice) {table_die_vec = new_dice;}
 unsigned int Table::getWager() {return wager;}
 unsigned int Table::getScore() {return current_score_of_turn;}
 vector<Die> Table::getDiceVec() {return table_die_vec;}
+void Table::setMaxScore(int new_max_score) {max_score = new_max_score;}

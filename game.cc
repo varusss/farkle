@@ -10,7 +10,8 @@ Game::Game() {
 }
 
 unsigned int Game::retrieveBet() {
-    system("clear");
+    //system("clear");
+    cout << endl;
     unsigned int retval;
     while (true) {
         retval = 0;
@@ -34,6 +35,15 @@ int Game::prompt(const int flag) {
              << "================================" << endl << endl;
 
         int playerNum = 0;
+        while (1) {
+            cin.clear();
+            int temp = 0;
+            cout << "Please enter how many points you want to play to (suggested: any number between 1000-5000)\n\t> ";
+            cin >> temp; if (!cin or temp < 1000 or temp > 5000) {cout << "Invalid input! (Enter a number between 1000-5000\n"; continue;} 
+            table.setMaxScore(temp);
+            break;
+        }
+
         while (players.size() != 2) {
             string name;
             unsigned int money;
@@ -72,7 +82,7 @@ int Game::prompt(const int flag) {
                     cout << "Invalid choice\n";
                     continue;
                 }
-                cout << "You chose: " << table.getDie()
+                cout << "You chose: " << table.getDie(dice).getName() << endl;  
                 selected_dice.push_back(table.getDie(dice));
             }
                 /*
@@ -140,7 +150,7 @@ int Game::prompt(const int flag) {
             unsigned int score = 0;
             players.push_back(Player{name,score,money,wager,selected_dice});
             playerNum++;
-            system("clear");
+            cout << endl;
         }
     }
 
@@ -183,10 +193,13 @@ void Game::startGame() {
         else
             Game::gameOver();
     }
-    
-
 }
 
+void Game::startRolling() {
+    // TODO
+    // Need:
+    // Roll, scoreboard implementation, score calculation, 
+}
 void Game::gameOver() {
     cout << "Thanks for playing!\n";
     exit(0);
