@@ -20,5 +20,6 @@ Die Player::getDie(int i){
 	//assert(i>= -1 && i <dice.size());
 	return dice[i];
 }
-
-
+vector<Die> Player::getDiceSet() {
+	return dice;
+}
