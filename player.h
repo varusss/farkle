@@ -27,5 +27,6 @@ class Player {
         unsigned int getBet();
         unsigned int getMoney();
         string getName();
-		Die getDie(int i);        
+		Die getDie(int i);     
+		vector<Die> getDiceSet();
 };
