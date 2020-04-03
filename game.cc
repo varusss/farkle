@@ -244,6 +244,7 @@ void Game::startRolling() {
 				continue;
 			}
 			while (true) {
+				score = 0;
 				cout << "Do you want to keep the dice(k) or bank the point(b)? \n";
 				cin.clear();
 				char c;
@@ -279,11 +280,12 @@ void Game::startRolling() {
 								cin >> s;
 								continue;
 							}
+
+							for (size_t i =0; i <rolls.size(); i++) cout << i+1 << ".Rolled: " << rolls[i] << endl;
+							score = Game::cal_score(rolls);
+							cout << "Score: " << score << endl;
+							break;
 						}
-						for (size_t i =0; i <rolls.size(); i++) cout << i+1 << ".Rolled: " << rolls[i] << endl;
-						score = Game::cal_score(rolls);
-						cout << "Score: " << score << endl;
-						break;
 						remove(temp.begin(), temp.end(), i-1);
 					}
 				}
@@ -335,18 +337,25 @@ unsigned int Game::cal_score(vector<int> rolls){
 		if (i == 6) count[5]++;
 	}
 	bool triple = false;
-	int size = rolls.size();
-	unique(rolls.begin(), rolls.end());
-	if (rolls.size() == size) return 1500;
-	sort(rolls.begin(),rolls.end());
-	bool straight= true;
-	for (size_t i = 0;i < rolls.size(); i++) {
-		if (rolls[i] != i+1) {
-			straight = false;
-			break;
+	if ( rolls.size() == 6) {
+		sort(rolls.begin(),rolls.end());
+		bool straight= true;
+		bool straight5 = true;
+		for (size_t i = 0;i < rolls.size(); i++) {
+			if (rolls[i] != i+1) {
+				straight = false;
+				break;
+			}
 		}
+		if (straight) return 1500;
+		for (size_t i = 0;i < rolls.size() -1; i++) {
+			if (rolls[i] != i+1) {
+				straight5 = false;
+				break;
+			}
+		}
+		if (straight5) return 1000;
 	}
-	if (straight) return 1000;
 	for (size_t i =0; i<count.size(); i++){
 		if (count[i] == 6){ // 6 of a kinds
 			if (i==0 )score = 1000 *8;
