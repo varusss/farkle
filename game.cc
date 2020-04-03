@@ -221,6 +221,7 @@ void Game::startRolling() {
 		}
 		cout <<"+++++++++++++++++++++++\n";
         */
+		int index =0;
 		for (Player &p :players){
 			vector<int> rolls;
 			unsigned int score =0;
@@ -257,26 +258,38 @@ void Game::startRolling() {
 						cin >> i;
 						if (!cin or i <0 or i >6) {
 							cout << "Invalid Choice\n";
-                            cin.clear();
-                            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+							cin.clear();
+							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							continue;
 						}
 						if (i == 0) {
+							vector<int> newScore;
 							cout << "New Rolls: \n";
 							for (size_t i = 0; i < temp.size(); i++){
 								set[temp[i]].roll();
 								rolls[temp[i]]=set[temp[i]].get_roll();
+								newScore.push_back(set[temp[i]].get_roll());
 							}
-							for (size_t i =0; i <rolls.size(); i++) cout << i+1 << ".Rolled: " << rolls[i] << endl;
-							score = Game::cal_score(rolls);
-							cout << "Score: " << score << endl;
-							break;
+							score = Game::cal_score(newScore);
+							if (!score){
+								for (int i : newScore) cout << "Rolled: " << i << endl;
+								cout << "Farkled!\n";
+								cout << "Enter a letter to continue\n";
+								string s;
+								cin >> s;
+								continue;
+							}
 						}
+						for (size_t i =0; i <rolls.size(); i++) cout << i+1 << ".Rolled: " << rolls[i] << endl;
+						score = Game::cal_score(rolls);
+						cout << "Score: " << score << endl;
+						break;
 						remove(temp.begin(), temp.end(), i-1);
 					}
 				}
 				else if (c == 'b') {
 					p.setScore(score);	
+					scoreboard.updateScore(score,index);
 					break;
 				}
 				else {
@@ -288,6 +301,7 @@ void Game::startRolling() {
 				cout << p.getName() <<  " win" << endl; 
 				break;
 			}
+			index++;
 		}
 		system("clear");
 		cout << "---------------------------------\n";
@@ -321,6 +335,18 @@ unsigned int Game::cal_score(vector<int> rolls){
 		if (i == 6) count[5]++;
 	}
 	bool triple = false;
+	int size = rolls.size();
+	unique(rolls.begin(), rolls.end());
+	if (rolls.size() == size) return 1500;
+	sort(rolls.begin(),rolls.end());
+	bool straight= true;
+	for (size_t i = 0;i < rolls.size(); i++) {
+		if (rolls[i] != i+1) {
+			straight = false;
+			break;
+		}
+	}
+	if (straight) return 1000;
 	for (size_t i =0; i<count.size(); i++){
 		if (count[i] == 6){ // 6 of a kinds
 			if (i==0 )score = 1000 *8;
